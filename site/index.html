@@ -143,15 +143,29 @@
     background:linear-gradient(160deg,#222a3a,#10131c);
     border:1px solid var(--border);
     box-shadow:0 30px 60px rgba(0,0,0,.5);
-    transition: transform .35s var(--ease), box-shadow .35s var(--ease), border-color .35s ease;
+    transition: transform .45s var(--ease), box-shadow .45s var(--ease), border-color .35s ease;
   }
   .phone:hover {
     transform: translateY(-10px);
     box-shadow: 0 44px 80px rgba(0,0,0,.6);
     border-color: rgba(245,158,11,.35);
   }
+  /* desktop fan — side phones tuck behind the center one */
+  @media (hover:hover) and (min-width:900px) {
+    .phone-row { gap:4px; }
+    .js .phone:first-child { transform: rotate(-4deg); }
+    .js .phone:last-child { transform: rotate(4deg); }
+    .js .phone:nth-child(2) { z-index:2; }
+    .js .phone:hover {
+      transform: rotate(0deg) translateY(-14px) scale(1.04);
+      box-shadow: 0 50px 90px rgba(0,0,0,.65);
+      border-color: rgba(245,158,11,.4);
+      z-index:3;
+    }
+  }
   .phone img { width:100%; height:auto; border-radius:27px; display:block; }
-  .phone figcaption { text-align:center; color:var(--muted); font-size:13px; padding:12px 0 6px; }
+  .phone figcaption { text-align:center; color:var(--muted); font-size:13px; padding:12px 0 6px; transition: color .25s ease; }
+  .phone:hover figcaption { color: var(--text); }
 
   /* ---------- sections ---------- */
   section { padding:88px 0; }
@@ -168,11 +182,19 @@
   /* features */
   .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:20px; }
   .card {
+    position: relative;
     background:var(--surface); border:1px solid var(--border); border-radius:20px;
     padding:28px;
     transition: border-color .25s ease, transform .25s var(--ease), box-shadow .25s ease;
   }
+  .card::before {
+    content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none;
+    background: radial-gradient(220px circle at var(--mx,50%) var(--my,0%), rgba(245,158,11,.09), transparent 65%);
+    opacity:0; transition: opacity .35s ease;
+  }
+  .card > * { position: relative; }
   .card:hover { border-color:rgba(245,158,11,.4); transform:translateY(-3px); box-shadow: 0 18px 40px rgba(0,0,0,.35); }
+  .card:hover::before { opacity:1; }
   .card .icon {
     width:48px; height:48px; border-radius:14px; display:flex; align-items:center; justify-content:center;
     margin-bottom:18px;
@@ -249,6 +271,18 @@
   }
   footer .links a:hover { color:var(--primary); }
 
+  /* ---------- A+ polish ---------- */
+  /* film grain — keeps the flat dark bg from feeling dead */
+  body::after {
+    content:""; position:fixed; inset:0; z-index:-1; pointer-events:none;
+    opacity:.05; mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .hero p.sub em {
+    font-family: var(--font-display); font-style: italic; font-weight:500;
+    color: var(--text); font-size:1.06em;
+  }
+
   @media (max-width:900px) {
     .steps { grid-template-columns: 1fr; }
   }
@@ -297,7 +331,7 @@
     <span class="pill">OPEN SOURCE · LOCAL-FIRST · AI-NATIVE</span>
     <h1>Say it. <span class="grad">Mean it.</span> Do it.</h1>
     <p class="sub">
-      Pakai Niat turns your rambling intentions into an organized life.
+      Pakai Niat turns your <em>rambling intentions</em> into an organized life.
       Type “maghrib at the mosque every day” or “finish report before 5pm, high priority” —
       the AI catalogs it, your phone remembers it, and streaks keep you honest.
     </p>
@@ -313,9 +347,9 @@
 
 <div class="wrap showcase">
   <div class="phone-row">
-    <figure class="phone reveal"><img src="assets/today.png" alt="Today view" width="1080" height="2400" loading="lazy"><figcaption>Today — what matters now</figcaption></figure>
-    <figure class="phone reveal"><img src="assets/capture.png" alt="AI capture sheet" width="1080" height="2400" loading="lazy"><figcaption>Capture — plain words in</figcaption></figure>
-    <figure class="phone reveal"><img src="assets/habits.png" alt="Habits view" width="1080" height="2400" loading="lazy"><figcaption>Habits — streaks &amp; honesty</figcaption></figure>
+    <figure class="phone reveal"><img src="assets/today.webp" alt="Today view showing five tasks with priorities" width="600" height="1305" loading="lazy"><figcaption>Today — what matters now</figcaption></figure>
+    <figure class="phone reveal"><img src="assets/capture.webp" alt="AI capture sheet parsing a plain sentence into tasks" width="600" height="1305" loading="lazy"><figcaption>Capture — plain words in</figcaption></figure>
+    <figure class="phone reveal"><img src="assets/habits.webp" alt="Habits view showing seven habits with active streaks" width="600" height="1305" loading="lazy"><figcaption>Habits — streaks &amp; honesty</figcaption></figure>
   </div>
 </div>
 
@@ -440,6 +474,15 @@
     });
   }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
   document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // Cursor-follow spotlight on feature cards
+  document.querySelectorAll('.card').forEach(card => {
+    card.addEventListener('pointermove', e => {
+      const r = card.getBoundingClientRect();
+      card.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+      card.style.setProperty('--my', (e.clientY - r.top) + 'px');
+    });
+  });
 
   // Nav gains depth on scroll
   const nav = document.querySelector('nav');
