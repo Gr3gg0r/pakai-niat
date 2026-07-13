@@ -11,7 +11,12 @@ import 'catalog_operation.dart';
 class CatalogService {
   CatalogService(this._isar);
 
-  final Isar _isar;
+  /// Constructor for widget tests that fully stub the service — no Isar
+  /// instance is needed (or available, e.g. in CI where the platform
+  /// IsarCore library is not present).
+  CatalogService.test();
+
+  late final Isar _isar;
 
   Future<void> commitOperations(List<CatalogOperation> operations) async {
     await _isar.writeTxn(() async {

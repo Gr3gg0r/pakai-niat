@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:isar/isar.dart';
 
 import 'package:pakai_niat/app.dart';
 import 'package:pakai_niat/models/habit.dart';
@@ -13,18 +12,19 @@ import 'package:pakai_niat/models/task.dart';
 import 'package:pakai_niat/providers/catalog_providers.dart';
 import 'package:pakai_niat/services/catalog_service.dart';
 
-import '../test_helper.dart';
-
 /// In-memory [CatalogService] for widget tests.
 ///
 /// Real Isar streams never deliver inside the fake-async zone that
 /// testWidgets installs (its FFI completions arrive on the real event
 /// loop), so this fake drives the UI through broadcast controllers, whose
-/// emissions are plain microtasks. The real persistence logic — including
-/// the undo reversals — is covered against a real Isar instance in
+/// emissions are plain microtasks. It never touches Isar — the native
+/// IsarCore library isn't present in every environment (e.g. CI, where
+/// the gitignored dylib is absent and downloads can race between parallel
+/// test isolates). The real persistence logic — including the undo
+/// reversals — is covered against a real Isar instance in
 /// test/services/catalog_service_test.dart.
 class _FakeCatalogService extends CatalogService {
-  _FakeCatalogService(super.isar);
+  _FakeCatalogService() : super.test();
 
   final _tasksController = StreamController<List<Task>>.broadcast();
   final _habitsController = StreamController<List<Habit>>.broadcast();
@@ -124,18 +124,14 @@ class _FakeCatalogService extends CatalogService {
 }
 
 void main() {
-  late Isar isar;
   late _FakeCatalogService service;
 
-  setUp(() async {
-    await Isar.initializeIsarCore(download: true);
-    isar = await openTestIsar();
-    service = _FakeCatalogService(isar);
+  setUp(() {
+    service = _FakeCatalogService();
   });
 
-  tearDown(() async {
+  tearDown(() {
     service.dispose();
-    await closeTestIsar(isar);
   });
 
   Task task(String title) => Task()

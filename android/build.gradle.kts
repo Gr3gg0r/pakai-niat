@@ -26,6 +26,9 @@ subprojects {
         plugins.withId("com.android.library") {
             extensions.configure<com.android.build.gradle.LibraryExtension>("android") {
                 namespace = "dev.isar.isar_flutter_libs"
+                // The plugin predates AGP's compileSdk checks; pin a floor so
+                // fresh androidx resolutions (e.g. fragment 1.7+) validate.
+                compileSdk = 34
             }
         }
     }
