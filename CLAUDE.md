@@ -44,5 +44,5 @@ Before finishing any change:
 1. `dart run build_runner build -d` if you touched an Isar schema.
 2. `flutter analyze` — zero warnings/errors.
 3. `flutter test` — all green.
-4. Update docs (`AGENTS.md`, `README.md`, `CHANGELOG.md`) if behavior,
+4. Update docs (`CLAUDE.md`, `README.md`, `CHANGELOG.md`) if behavior,
    layout, or commands changed.

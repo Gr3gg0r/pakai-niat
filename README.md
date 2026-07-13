@@ -24,10 +24,10 @@ An AI-native habit & task companion. Capture intentions in plain words — the A
 ## Screenshots
 
 <p align="center">
-  <img src="docs/screenshots/today.png" width="220" alt="Today view">
-  <img src="docs/screenshots/capture.png" width="220" alt="AI capture sheet">
-  <img src="docs/screenshots/habits.png" width="220" alt="Habits view">
-  <img src="docs/screenshots/ideas.png" width="220" alt="Ideas view">
+  <img src="assets/screenshots/today.png" width="220" alt="Today view">
+  <img src="assets/screenshots/capture.png" width="220" alt="AI capture sheet">
+  <img src="assets/screenshots/habits.png" width="220" alt="Habits view">
+  <img src="assets/screenshots/ideas.png" width="220" alt="Ideas view">
 </p>
 
 ## Why
@@ -38,7 +38,7 @@ Most planners are Gantt charts squeezed onto a phone screen — sixteen-field di
 - **Habits with real stakes** — streaks increment once per day (no double-tap cheating), and the Miss button actually logs the miss. Honest data beats flattering data.
 - **Priorities that infer themselves** — "urgent", "before Friday prayers", "after work" become real priority levels and ISO timestamps.
 - **Local-first & private** — everything lives in an on-device Isar database. No account, no cloud, no analytics. The AI only ever sees the sentence you typed.
-- **Bring your own brain** — runs on OpenRouter's free model router. No subscription, no credit card.
+- **Bring your own key** — runs on OpenRouter with DeepSeek V4 Flash by default: fast, strict JSON output, a few cents a month at typical use. Free models kick in as fallback if your account runs dry.
 
 ## Quick start
 
@@ -59,7 +59,7 @@ No key handy? The app still runs — capture falls back to a clear in-app messag
 ```
 ┌─────────────┐    plain words     ┌──────────────┐   structured ops   ┌─────────────┐
 │  Capture UI │ ─────────────────▶ │  OpenRouter  │ ────────────────▶  │   Preview   │
-└─────────────┘                    │ (free router)│                    │  & Apply    │
+└─────────────┘                    │ (DeepSeek)   │                    │  & Apply    │
                                    └──────────────┘                    └──────┬──────┘
                                                                               │ Isar txn
                                                                               ▼
@@ -80,7 +80,7 @@ lib/
   services/    OpenRouterParser, CatalogService (all mutations)
   providers/   Riverpod providers bridging Isar streams to UI
   views/       Splash, Home (Today / Habits / Ideas), Capture sheet
-test/          Unit + widget tests (27 and counting)
+test/          Unit + widget tests (79 and counting)
 site/          Static landing page (deployed to GitHub Pages)
 ```
 
@@ -91,7 +91,7 @@ site/          Static landing page (deployed to GitHub Pages)
 | Framework | Flutter | One codebase, every screen |
 | State | Riverpod | Unidirectional, testable |
 | Storage | Isar | Local-first, reactive streams |
-| AI | OpenRouter (`openrouter/free`) | Free model router, strict JSON output |
+| AI | OpenRouter (`deepseek/deepseek-v4-flash`) | Cheap, fast, strict JSON; free models as fallback |
 | HTTP | dio | Typed, interceptable |
 
 ## Development
