@@ -16,23 +16,24 @@ class OpenRouterParser {
 
   static const String _endpoint = 'https://openrouter.ai/api/v1/chat/completions';
 
-  /// Free models, in preferred order. OpenRouter's free router is first
-  /// because it auto-selects a working free provider.
+  /// Command parser model. DeepSeek V4 Flash is dirt cheap
+  /// ($0.077/$0.154 per M tokens) and handles json_object reliably.
+  /// The retrospective engine, when built, should use
+  /// 'deepseek/deepseek-v4-pro' for its stronger reasoning.
+  static const String _parserModel = 'deepseek/deepseek-v4-flash';
+
+  /// Paid fallback if the primary parser model is unavailable.
+  static const String _paidFallback = 'deepseek/deepseek-v4-pro';
+
+  /// Free models, last resort only (e.g. account out of credits).
+  /// They are flaky: providers error out, return malformed JSON, or
+  /// ignore the system prompt.
   static const List<String> _freeModels = [
     'openrouter/free',
     'meta-llama/llama-3.3-70b-instruct:free',
     'qwen/qwen3-coder:free',
     'nousresearch/hermes-3-llama-3.1-405b:free',
   ];
-
-  static const List<String> _paidFallback = [
-    'google/gemini-2.5-flash',
-  ];
-
-  /// Set `--dart-define=OPENROUTER_ENABLE_PAID=true` to allow the paid fallback
-  /// when all free models fail. By default we stay on free models only.
-  static const bool _enablePaidFallback =
-      String.fromEnvironment('OPENROUTER_ENABLE_PAID') == 'true';
 
   Future<List<CatalogOperation>> parse(String rawText, {DateTime? currentTime}) async {
     if (apiKey.isEmpty || apiKey == 'replace_me') {
@@ -43,8 +44,9 @@ class OpenRouterParser {
     String? lastErrorMessage;
 
     final models = [
+      _parserModel,
+      _paidFallback,
       ..._freeModels,
-      if (_enablePaidFallback) ..._paidFallback,
     ];
 
     for (final model in models) {
@@ -82,9 +84,9 @@ class OpenRouterParser {
         }
         return _mapToOperations(decoded);
       } catch (e) {
-        // Free models are flaky: providers error out, return malformed JSON,
-        // or ignore the system prompt. Wait briefly to avoid 429 bursts, then
-        // try the next model instead of failing immediately.
+        // A model may error out, return malformed JSON, or ignore the
+        // system prompt. Wait briefly to avoid 429 bursts, then try the
+        // next model instead of failing immediately.
         lastErrorMessage = e.toString();
         await Future.delayed(const Duration(seconds: 2));
         continue;
@@ -92,9 +94,8 @@ class OpenRouterParser {
     }
 
     throw StateError(
-      'All free OpenRouter models failed. Last error: $lastErrorMessage. '
-      'Wait a minute and try again, or rebuild with '
-      '--dart-define=OPENROUTER_ENABLE_PAID=true to allow a paid fallback.',
+      'All OpenRouter models failed. Last error: $lastErrorMessage. '
+      'Check your API key and account credits, then try again.',
     );
   }
 
@@ -119,8 +120,8 @@ Rules:
 Example output for "study Rust for an hour":
 {"operations":[{"op":"create","type":"task","title":"Study Rust","dueDateTime":"${now.toIso8601String()}"}]}
 
-Example output for "rename skin care to face care":
-{"operations":[{"op":"update","targetType":"habit","targetTitle":"skin care","newTitle":"face care"}]}
+Example output for "rename reading habit to deep reading":
+{"operations":[{"op":"update","targetType":"habit","targetTitle":"reading","newTitle":"deep reading"}]}
 
 Example output for "today is friday so change zuhr prayer to solat jumaat":
 {"operations":[{"op":"create","type":"task","title":"Solat Jumaat"},{"op":"update","targetType":"habit","targetTitle":"zuhr prayer","markDone":true}]}

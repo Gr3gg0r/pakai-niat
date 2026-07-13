@@ -292,7 +292,7 @@ void main() {
     expect(op.draft.title, 'Recovered');
   });
 
-  test('throws a wait-and-retry error when all models fail', () async {
+  test('throws a check-key-and-credits error when all models fail', () async {
     final dio = Dio();
     dio.httpClientAdapter = _FailingAdapter();
 
@@ -303,7 +303,7 @@ void main() {
       throwsA(isA<StateError>().having(
         (e) => e.message,
         'message',
-        contains('Wait a minute and try again'),
+        contains('Check your API key and account credits'),
       )),
     );
   });
