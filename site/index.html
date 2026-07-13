@@ -229,6 +229,100 @@
   .step h3 { font-size:17px; margin-bottom:8px; }
   .step p { color:var(--muted); font-size:14.5px; position:relative; }
 
+  /* ---------- animated demo ---------- */
+  .demo {
+    max-width:680px; margin:0 auto 72px;
+    background:var(--surface); border:1px solid var(--border); border-radius:24px;
+    padding:22px; box-shadow:0 30px 60px rgba(0,0,0,.4);
+  }
+  .demo-steps { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-bottom:18px; }
+  .demo-step {
+    display:inline-flex; align-items:center; gap:8px;
+    padding:6px 14px 6px 8px; border-radius:999px; font-size:13px; font-weight:600;
+    color:var(--muted); border:1px solid var(--border); background:var(--surface-2);
+    transition: color .3s ease, border-color .3s ease, background .3s ease;
+  }
+  .demo-step .dot {
+    width:20px; height:20px; border-radius:50%; flex:none;
+    display:flex; align-items:center; justify-content:center;
+    font-size:11px; font-weight:800;
+    background:rgba(148,163,184,.16); color:var(--muted);
+    transition: background .3s ease, color .3s ease;
+  }
+  .demo-step .dot::after { content:"✓"; display:none; }
+  .demo-step.active { color:var(--text); border-color:rgba(245,158,11,.5); background:rgba(245,158,11,.08); }
+  .demo-step.active .dot { background:var(--primary); color:#1C1400; }
+  .demo-step.done { color:var(--accent); border-color:rgba(52,211,153,.35); }
+  .demo-step.done .dot { background:var(--accent); color:#052e1c; }
+  .demo-step.done .dot .num { display:none; }
+  .demo-step.done .dot::after { display:block; }
+
+  .demo-stage {
+    position:relative; height:300px; overflow:hidden;
+    border-radius:16px; background:var(--bg); border:1px solid var(--border);
+  }
+  .demo-pane {
+    position:absolute; inset:0; padding:22px;
+    display:flex; flex-direction:column;
+    opacity:0; transform:translateY(14px); pointer-events:none;
+    transition: opacity .45s var(--ease), transform .45s var(--ease);
+  }
+  .demo:not(.live) .demo-pane:first-child,
+  .demo-pane.active { opacity:1; transform:none; pointer-events:auto; }
+  .demo-pane h4 { font-size:16px; font-weight:700; margin-bottom:4px; }
+  .demo-pane .hint { color:var(--muted); font-size:12.5px; margin-bottom:16px; }
+  .row-body { display:flex; flex-direction:column; gap:2px; }
+
+  .cap-input {
+    display:flex; align-items:center; gap:2px;
+    background:var(--surface-2); border:1px solid var(--border); border-radius:12px;
+    padding:12px 14px; font-size:14px; color:var(--text); min-height:48px;
+    transition: border-color .25s ease, box-shadow .25s ease;
+  }
+  .cap-input.focused { border-color:rgba(245,158,11,.55); box-shadow:0 0 0 3px rgba(245,158,11,.1); }
+  .caret { width:2px; height:16px; background:var(--primary); flex:none; animation: blink 1s steps(2) infinite; }
+  @keyframes blink { 50% { opacity:0; } }
+  .cap-btn {
+    margin-top:auto; padding:12px; border:none; border-radius:12px; cursor:default;
+    background:var(--primary); color:#1C1400; font-weight:700; font-size:14px; font-family:inherit;
+    transition: transform .15s var(--ease), box-shadow .2s ease;
+  }
+  .cap-btn.press { transform:scale(.96); box-shadow:0 0 0 4px rgba(245,158,11,.25); }
+
+  .op-card, .task-row, .habit-row {
+    display:flex; align-items:center; gap:12px;
+    background:var(--surface-2); border:1px solid var(--border); border-radius:12px;
+    padding:12px 14px; margin-bottom:10px;
+  }
+  .op-card, .task-row.new {
+    opacity:0; transform:translateY(10px);
+    transition: opacity .4s var(--ease), transform .4s var(--ease);
+  }
+  .op-card.in, .task-row.new.in { opacity:1; transform:none; }
+  .op-plus { color:var(--accent); font-weight:800; font-size:16px; }
+  .op-card .kind { color:var(--primary); font-weight:700; font-size:12px; text-transform:uppercase; letter-spacing:.06em; }
+  .op-card .title, .task-row .title, .habit-row .title { font-size:14px; font-weight:600; }
+  .op-card .meta, .task-row .meta, .habit-row .meta { color:var(--muted); font-size:12px; }
+  .chip-high {
+    color:#FB7185; background:rgba(251,113,133,.14);
+    padding:2px 8px; border-radius:6px; font-size:11px; font-weight:700; margin-left:4px;
+  }
+  .task-row .check {
+    margin-left:auto; width:22px; height:22px; border-radius:50%; flex:none;
+    border:2px solid rgba(148,163,184,.4);
+    display:flex; align-items:center; justify-content:center;
+    font-size:12px; font-weight:800; color:transparent;
+    transition: background .25s ease, border-color .25s ease, color .25s ease, transform .3s var(--ease);
+  }
+  .check.on { background:var(--accent); border-color:var(--accent); color:#052e1c; }
+  .task-row.checked .check { background:var(--accent); border-color:var(--accent); color:#052e1c; transform:scale(1.15); }
+  .task-row.checked .title { text-decoration:line-through; }
+  .task-row.dim, .habit-row.dim { opacity:.45; }
+  .habit-row .streak { margin-left:auto; color:var(--muted); font-size:12.5px; }
+  .habit-row .streak b { color:var(--accent); font-size:15px; display:inline-block; transition: transform .3s var(--ease); }
+  .habit-row.bump .streak b { transform:scale(1.5); }
+  .demo-note { margin-top:auto; text-align:center; color:var(--muted); font-size:12px; }
+
   /* tech */
   .tech-row { display:flex; gap:14px; justify-content:center; flex-wrap:wrap; }
   .chip {
@@ -401,6 +495,74 @@
       <span class="eyebrow">How it works</span>
       <h2>Three steps between thought and done</h2>
     </div>
+    <div class="demo reveal" data-demo>
+      <div class="demo-steps" aria-hidden="true">
+        <span class="demo-step" data-step="capture"><span class="dot"><span class="num">1</span></span>Capture</span>
+        <span class="demo-step" data-step="parse"><span class="dot"><span class="num">2</span></span>AI parses</span>
+        <span class="demo-step" data-step="today"><span class="dot"><span class="num">3</span></span>Today</span>
+        <span class="demo-step" data-step="streak"><span class="dot"><span class="num">4</span></span>Streak</span>
+      </div>
+      <div class="demo-stage">
+        <div class="demo-pane" data-pane="capture">
+          <h4>Capture</h4>
+          <p class="hint">Tell the agent what to schedule, change, or remember.</p>
+          <div class="cap-input" data-cap-input><span data-typed>gym at 8pm tonight, high priority</span><span class="caret"></span></div>
+          <button class="cap-btn" type="button" tabindex="-1" data-parse-btn>✦ Parse with AI</button>
+        </div>
+        <div class="demo-pane" data-pane="parse">
+          <h4>AI drafted 1 operation</h4>
+          <p class="hint">Review before anything touches your catalog.</p>
+          <div class="op-card" data-op-card>
+            <span class="op-plus">＋</span>
+            <div class="row-body">
+              <span class="kind">Task</span>
+              <span class="title">Gym session</span>
+              <span class="meta">8:00 PM<span class="chip-high">HIGH</span></span>
+            </div>
+          </div>
+          <button class="cap-btn" type="button" tabindex="-1" data-apply-btn>Apply</button>
+        </div>
+        <div class="demo-pane" data-pane="today">
+          <h4>Today</h4>
+          <p class="hint">One calm column — what matters now.</p>
+          <div class="task-row dim">
+            <div class="row-body">
+              <span class="title">Submit weekly report</span>
+              <span class="meta">5:00 PM<span class="chip-high">HIGH</span></span>
+            </div>
+            <span class="check">✓</span>
+          </div>
+          <div class="task-row new" data-new-task>
+            <div class="row-body">
+              <span class="title">Gym session</span>
+              <span class="meta">8:00 PM<span class="chip-high">HIGH</span></span>
+            </div>
+            <span class="check">✓</span>
+          </div>
+          <p class="demo-note">Tap ✓ to complete — or ✕ to log an honest miss.</p>
+        </div>
+        <div class="demo-pane" data-pane="streak">
+          <h4>Habits</h4>
+          <p class="hint">Streaks keep you honest.</p>
+          <div class="habit-row" data-habit-row>
+            <div class="row-body">
+              <span class="title">Subuh prayer</span>
+              <span class="meta">daily</span>
+            </div>
+            <span class="streak">Streak <b data-streak>12</b></span>
+            <span class="check on">✓</span>
+          </div>
+          <div class="habit-row dim">
+            <div class="row-body">
+              <span class="title">Skin care routine</span>
+              <span class="meta">every 2 days</span>
+            </div>
+            <span class="streak">Streak <b>4</b></span>
+          </div>
+          <p class="demo-note">Honest data beats flattering data.</p>
+        </div>
+      </div>
+    </div>
     <div class="steps">
       <div class="step reveal">
         <div class="num">1</div>
@@ -483,6 +645,92 @@
       card.style.setProperty('--my', (e.clientY - r.top) + 'px');
     });
   });
+
+  // ---------- animated demo: capture → parse → today → streak ----------
+  (() => {
+    const demo = document.querySelector('[data-demo]');
+    if (!demo) return;
+    demo.classList.add('live');
+    const TEXT = 'gym at 8pm tonight, high priority';
+    const steps = [...demo.querySelectorAll('.demo-step')];
+    const panes = [...demo.querySelectorAll('.demo-pane')];
+    const typed = demo.querySelector('[data-typed]');
+    const capInput = demo.querySelector('[data-cap-input]');
+    const parseBtn = demo.querySelector('[data-parse-btn]');
+    const opCard = demo.querySelector('[data-op-card]');
+    const applyBtn = demo.querySelector('[data-apply-btn]');
+    const newTask = demo.querySelector('[data-new-task]');
+    const habitRow = demo.querySelector('[data-habit-row]');
+    const streakEl = demo.querySelector('[data-streak]');
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    let timers = [];
+    const at = (ms, fn) => timers.push(setTimeout(fn, ms));
+    const clearAll = () => { timers.forEach(clearTimeout); timers = []; };
+    const setStep = (name, state) => {
+      const el = steps.find(s => s.dataset.step === name);
+      if (!el) return;
+      el.classList.remove('active', 'done');
+      if (state) el.classList.add(state);
+    };
+    const showPane = name => panes.forEach(p => p.classList.toggle('active', p.dataset.pane === name));
+
+    const reset = () => {
+      steps.forEach(s => s.classList.remove('active', 'done'));
+      typed.textContent = '';
+      capInput.classList.remove('focused');
+      parseBtn.classList.remove('press');
+      applyBtn.classList.remove('press');
+      opCard.classList.remove('in');
+      newTask.classList.remove('in', 'checked');
+      habitRow.classList.remove('bump');
+      streakEl.textContent = '12';
+    };
+
+    const run = () => {
+      clearAll();
+      reset();
+      at(100, () => { setStep('capture', 'active'); showPane('capture'); capInput.classList.add('focused'); });
+      let i = 0;
+      const typeNext = () => {
+        typed.textContent = TEXT.slice(0, ++i);
+        if (i < TEXT.length) at(42, typeNext);
+      };
+      at(700, typeNext);
+      at(2300, () => parseBtn.classList.add('press'));
+      at(2600, () => parseBtn.classList.remove('press'));
+      at(2900, () => { setStep('capture', 'done'); setStep('parse', 'active'); showPane('parse'); });
+      at(3300, () => opCard.classList.add('in'));
+      at(4100, () => applyBtn.classList.add('press'));
+      at(4400, () => applyBtn.classList.remove('press'));
+      at(4700, () => { setStep('parse', 'done'); setStep('today', 'active'); showPane('today'); });
+      at(5100, () => newTask.classList.add('in'));
+      at(6200, () => newTask.classList.add('checked'));
+      at(6900, () => { setStep('today', 'done'); setStep('streak', 'active'); showPane('streak'); });
+      at(7500, () => { streakEl.textContent = '13'; habitRow.classList.add('bump'); });
+      at(7900, () => habitRow.classList.remove('bump'));
+      at(9500, run);
+    };
+
+    if (reduce) {
+      // Static end state — same story, no motion
+      reset();
+      ['capture', 'parse', 'today', 'streak'].forEach(s => setStep(s, 'done'));
+      showPane('streak');
+      streakEl.textContent = '13';
+      typed.textContent = TEXT;
+      return;
+    }
+
+    // Only animate while the demo is on screen
+    const demoIO = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) run();
+        else clearAll();
+      });
+    }, { threshold: 0.3 });
+    demoIO.observe(demo);
+  })();
 
   // Nav gains depth on scroll
   const nav = document.querySelector('nav');
