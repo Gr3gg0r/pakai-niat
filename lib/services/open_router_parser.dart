@@ -63,6 +63,10 @@ class OpenRouterParser {
           ),
           data: {
             'model': model,
+            // Route to the fastest provider: default routing load-balances
+            // across all hosts, including slow/overloaded ones (measured
+            // 5-12s vs 2-4s with throughput sorting).
+            'provider': {'sort': 'throughput'},
             'response_format': {'type': 'json_object'},
             'messages': [
               {
@@ -88,7 +92,7 @@ class OpenRouterParser {
         // system prompt. Wait briefly to avoid 429 bursts, then try the
         // next model instead of failing immediately.
         lastErrorMessage = e.toString();
-        await Future.delayed(const Duration(seconds: 2));
+        await Future.delayed(const Duration(milliseconds: 800));
         continue;
       }
     }
