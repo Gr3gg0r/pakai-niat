@@ -32,8 +32,8 @@ dependencies:
     sdk: flutter
 
   # State management
-  flutter_riverpod: ^2.6.1
-  riverpod: ^2.6.1
+  flutter_riverpod: ^3.4.3
+  riverpod: ^3.4.3
 
   # Local database
   isar: ^3.1.0+1
