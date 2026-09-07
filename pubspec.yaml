@@ -40,7 +40,7 @@ dependencies:
   isar_flutter_libs: ^3.1.0+1
 
   # Networking
-  dio: ^5.8.0
+  dio: ^5.11.1
 
 
   # Formatting
